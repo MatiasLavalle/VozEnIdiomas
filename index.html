@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        input,select,label,button{
+            font-size: larger;
+            display: block;
+            background-color: #EEE;
+            width:90%;
+            padding:5px;
+            margin-bottom: 10px;
+        }
+        label{
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>texto a voz</h1>
+
+    <div>
+        <label for="">texto</label>
+        <input type="text" id="texto">
+        <label for="">voces(idiomas)</label>
+        <select name="" id=""></select>
+        <button>hablar</button>
+    </div>
+
+
+    <script>
+
+        let voces
+
+        if(window.speechSynthesis == undefined){
+            console.log('API no disponible')
+        }else{
+            if(speechSynthesis.onvoiceschanged === undefined){
+                setTimeout(leerVoces, 3000);
+            }else{
+                speechSynthesis.addEventListener('voiceschanged', leerVoces)
+            }
+        }
+
+
+        let hablar = document.querySelector('button')
+
+        hablar.addEventListener('click', evt => {
+            // console.log(evt)
+            let u = new SpeechSynthesisUtterance()
+            u.text = document.querySelector('#texto').value
+            let voz = voces[parseInt(document.querySelector('select').value)]
+            console.log(voz)
+            u.lang= voz.lang
+            u.voice= voz
+            speechSynthesis.speak(u)
+        })
+
+
+        
+
+
+
+        function leerVoces(){
+            voces = speechSynthesis.getVoices();
+            console.dir(voces);
+            voces.sort((a, b)=>{
+                if(a.lang<b.lang){
+                    return -1
+                }else {
+                    return 1
+                }
+            });
+
+            let select = document.querySelector('select')
+            let i=0
+            let defaultVoz
+
+
+            for(let voz of voces){
+                select.innerHTML += `
+                    <option value="${i}">${voz.name} | ${voz.lang}</option>
+                `
+                if(voz.lang === 'es-ES'){
+                    defaultVoz = i
+                    console.log(i) 
+                }
+                i++
+            }
+            console.log(defaultVoz)
+            select.value = defaultVoz
+        }
+
+
+
+
+
+
+    </script>    
+</body>
+</html>
